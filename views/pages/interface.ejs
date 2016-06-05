@@ -1,20 +1,140 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <% include ../partials/header.ejs %>
-</head>
+  <head>
+    <% include ../partials/header.ejs %>
+  </head>
+  <body>
+    <% include ../partials/nav.ejs %>
+    <div class="container">
+      <div role="main" class="main-content">
+        <h2>Interface Login:</h2>
+        <form method="get" action="interface">
+          <select name="methodSearch">
+            <option <%=(selectedMethod=='organization'? 'selected="true"':'') %> value="organization"> Organization:</option>
+            <option <%=(selectedMethod=='username'? 'selected="true"':'') %> value="username">Username</option>
+          </select>
+          <input type="text" name="orgs" value="<%=orgs%>" />
+          <input type="submit" id="submit" />
+        </form>
+        <% if ( typeof items !== 'undefined' ){ %>
+        <div class="container">
+          <div class="columns">
+            <div class="column three-fourths codesearch-results">
+              <div class="sort-bar">
+                <%  if(items.length > 0){ %>
+                <h3>Sort</h3>
+                <ul>
 
-<body>
+                <%
+                var addToLink='';
+                var stringDisable=false;
 
-<% include ../partials/nav.ejs %>
+                for (var k in sortArray) {
+                  addToLink='';
+                  stringDisable="";
+                    if(k.substring(0,4)=='asc_'){
+                       addToLink='&sort='+ k.slice(4) +'&order=asc';
+                      if(sort == k.slice(4) && order == 'asc'){
+                         stringDisable =true;
+                      }
+                    }else if(k !==""){
+                        addToLink='&sort='+ k +'&order=desc';
+                        if(sort == k  && order == 'desc'){
+                           stringDisable = true;
+                        }
+                    }
 
-<div class="container">
-<h2>Interface Login:</h2>
 
-<ul>
+                  %>
+                <li>
+                  <% if (stringDisable == false) { %>
+                  <a href="<%=sortLink+addToLink%>" >
+                    <% } %>
+                    <%=sortArray[k] %>
+                      <% if (stringDisable == false) { %>
+                  </a>
+                    <% } %>
+                </li>
+                 <% } %>
+
+              </ul>
+              <% } %>
+                <h3>
+                We have found <%=totalResults.toLocaleString(); %> repository results for <%=orgs%>
+                </h3>
+              </div>
+              <ul class="repo-list js-repo-list">
+                  <% var i=0;
+                  if(items.length > 0){
+                  items.forEach(function(r) { i++; %>
+              <li class="repo-list-item public source">
+              <h3 class="repo-list-name">
+
+              <a href='<%=r.html_url %>'> <%=r.full_name %></a>
+              </h3>
+              <p class="repo-list-description">
+               <%=r.description %>
+              </p>
+              <p class="repo-list-meta">
+              Updated <relative-time datetime="<%=r.updated_at %>" title="<%=r.updated_at %>"> <%=r.updated_at %> </relative-time>
+              </p>
+              </li>
+                <% }); %>
+              </ul>
+
+ <% if (pageCount > 1 && (selectedMethod != "username")) { %>
+<div class="paginate-container">
+<ul class="pagination">
+  <%
+  if((+currentPage -4) > 1 ){ %>
+     <li><a href="<%=searchLink %>&page=<%=1%>">&laquo;&laquo;</a></li>
+      <li><a href="<%=searchLink %>&page=<%=(+currentPage -4)%>">&laquo;</a></li>
+    <% } else if (currentPage > 1) { %>
+      <li><a href="<%=searchLink %>&page=1">&laquo;</a></li>
+  <% }%>
+  <% var i = currentPage;
+  if (currentPage > 5 ) {
+  i = +currentPage - 4;
+  } %>
+  <% if (i !== 1) { %>
+      <li class="disabled"><a href="#">...</a></li>
+  <% } %>
+  <%
+  var until = currentPage;
+  if((+currentPage + 4)< pageCount){
+    until =+until + 4;
+  }else{
+    until = pageCount;
+  }
+  for (i; i<=currentPage+4; i++) { %>
+    <% if (currentPage == i) { %>
+        <li class="active"><span><%= i %> <span class="sr-only">(current)</span></span></li>
+    <% } else { %>
+        <li><a href="<%=searchLink %>&page=<%= i %>"><%= i %></a></li>
+    <% } %>
+    <% if (i == (+currentPage + 4)) { %>
+        <li class="disabled"><a href="#">...</a></li>
+    <% break; } %>
+  <% } %>
+  <% if (currentPage != pageCount) {
+      var nextNum =currentPage;
+      if((+currentPage + 4)< pageCount){
+        nextNum =+nextNum + 4;
+      }
+     %>
+      <li><a href="<%=searchLink %>&page=<%= nextNum %>">&raquo;</a></li>
+        <li><a href="<%=searchLink %>&page=<%= pageCount %>">&raquo;&raquo;</a></li>
+  <% } %>
 </ul>
+   </div>
+<% } %>
+              </div>
 
-</div>
-
-</body>
+            </div>
+          </div>
+        </div>
+<% } } %>
+      </div>
+    </div>
+  </body>
 </html>
