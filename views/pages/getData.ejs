@@ -1,0 +1,39 @@
+app.use(express.bodyParser());
+
+app.post('/', function(request, response){
+    console.log(request.body.orgs);
+});
+
+
+var http = require('http');
+
+//The url we want is: 'www.random.org/integers/?num=1&min=1&max=10&col=1&base=10&format=plain&rnd=new'
+var options = {
+  host: 'https://api.github.com',
+  path: 'orgs/'+request.body.orgs+'/repos?page=1'
+};
+
+app.get('/interface', function(req, res) {
+  res.redirect('https://api.github.com'+'orgs/'+request.body.orgs+'/repos?page=1' );
+});
+
+//callback = function(response) {
+//  var str = '';
+
+  //another chunk of data has been recieved, so append it to `str`
+//  response.on('data', function (chunk) {
+//    str += chunk;
+//  });
+
+  //the whole response has been recieved, so we just print it out here
+//  response.on('end', function () {
+//    console.log(str);
+//  });
+//}
+
+//http.request(options, callback).end();
+
+//response.writeHead(301,
+//  {Location: '/interface'+'?results='+str}
+//);
+//response.end();
