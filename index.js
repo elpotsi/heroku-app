@@ -41,7 +41,7 @@ if(selectedMethod == "username"){
 }
     //get the results from the api github
     getJSON(ApiLink+'page='+page+'&sort='+sort+'&order='+order, function(data) {//&page,per_page,sort,order
-  
+
   var jsonObject =  JSON.parse(data);
 
 //init sortArray
